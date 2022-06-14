@@ -1,0 +1,56 @@
+<server description="new server">
+
+	<!-- Enable features -->
+    <featureManager>
+	<feature>webProfile-8.0</feature>
+	<feature>localConnector-1.0</feature>
+        <feature>eventLogging-1.0</feature>
+        <feature>requestTiming-1.0</feature>
+	<feature>restConnector-2.0</feature>
+    </featureManager>
+
+    <httpAccessLogging id="pdprofAccessLogging" logFormat="%h %u %t &quot;%r&quot; %s %b %{remote}p %D %{JSESSIONID}C %{Set-Cookie}o"/>
+    <httpEndpoint accessLoggingRef="pdprofAccessLogging" host="*" httpPort="9080" httpsPort="9443" id="defaultHttpEndpoint"/>
+
+    <eventLogging logMode="entryExit" minDuration="1ms"/>
+
+    <requestTiming slowRequestThreshold="5s" hungRequestThreshold="10m">
+    </requestTiming>
+
+    <logging  traceSpecification="ClassLoadingService=all:SharedLibrary=all"
+      traceFileName="trace.log"
+      maxFileSize="20"
+      maxFiles="10"
+      traceFormat="BASIC" />
+
+   <basicRegistry id="basic">
+      <user name="wsadmin" password="passw0rd" />
+      <user name="reader" password="passw0rd" />
+   </basicRegistry>
+   <administrator-role>
+      <user>wsadmin</user>
+   </administrator-role>
+   <reader-role>
+      <user>reader</user>
+   </reader-role>
+
+    <!-- Automatically expand WAR files and EAR files -->
+    <applicationManager autoExpand="true"/>
+
+    <fileset id="fsa" dir="${server.config.dir}/resources/" includes="A.jar"/>
+    <fileset id="fsb" dir="${server.config.dir}/resources/" includes="B.jar"/>
+    <fileset id="fsp" dir="${server.config.dir}/resources/" includes="P.jar"/>
+    <library id="A" filesetRef="fsa"/>
+    <library id="B" filesetRef="fsb"/>
+    <library id="P" filesetRef="fsp"/>
+    <library id="mixed" filesetRef="fsa,fsb"/>
+   
+    <applicationMonitor updateTrigger="mbean"/>
+
+    <webApplication id="classloader.web" location="classloader.web.war" name="classloader.web">
+        <classloader privateLibraryRef="P"/>
+    	<classloader commonLibraryRef="A,B"/> 
+    	<!-- <classloader commonLibraryRef="mixed"/> -->
+    </webApplication>
+
+</server>

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: classloader-deployment
+  labels:
+    app: classloader
+spec:
+  selector:
+    matchLabels:
+      app: classloader
+  template:
+    metadata:
+      labels:
+        app: classloader
+    spec:
+      containers:
+      - name: classloader-container
+        image: image-registry.openshift-image-registry.svc:5000/[project-name]/classloader:[build-date]
+        ports:
+        - containerPort: 9080
+      imagePullSecrets:
+      - name: docker-user-secret
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: classloader-service
+spec:
+  selector:
+    app: classloader
+  ports:
+  - protocol: TCP
+    port: 9080
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: classloader-route
+spec:
+  to:
+    kind: Service
+    name: classloader-service
