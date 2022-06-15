@@ -1,4 +1,4 @@
-# PDPro Application
+# ClassLoader application
 
 ## Requirements
 
@@ -14,7 +14,6 @@ setup-docker.sh
 
 ### Start docker 
 ```
-mkdir ~/pdprof
 docker run --rm -p 9443:9443 -p 9080:9080 classloader
 ```
 
